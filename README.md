@@ -2,11 +2,11 @@
 
 Prosty skrypt, który automatycznie kopiuje historie pamięci przeglądarki na podłączony pendrive.
 
-## 📌 Funkcje
+## Funkcje
 - Kopiuje plik do przygotowanego katalogu na USB
 - Obsługuje błędy, gdy pendrive nie jest podłączony (todo)
 
-## 🔧 Wymagania
+## Wymagania
 - Windows (kopiowanie przystosowane do NTFS)
 - Pendrive
 - Przeglądarka:
@@ -16,7 +16,7 @@ Prosty skrypt, który automatycznie kopiuje historie pamięci przeglądarki na p
   - Opera
   - Brave
 
-## 🛠 Instalacja
+## Instalacja
 1. Pobierz repozytorium:
    ```bash
    git clone https://github.com/Entrapta2040/searchCopy.git
@@ -27,7 +27,7 @@ Prosty skrypt, który automatycznie kopiuje historie pamięci przeglądarki na p
    gcc program.c -o nazwa_exe_jaka_chcemy.exe
    ```
 
-## ▶ Jak używać?
+## Jak używać?
 Po uruchomieniu pliku automatycznie przekopiuje on pamięć przeglądarki na usb
 
 Aby zautomatyzować działanie sugeruje sie:
@@ -38,6 +38,6 @@ Aby zautomatyzować działanie sugeruje sie:
    open=program.exe
    ```
 3. Przy podłączeniu pendirve powinno automatycznie przekopiować pliki na pendrive
-## 📜 Licencja
+## Licencja
 MIT License
 
