@@ -33,10 +33,10 @@ Po uruchomieniu pliku automatycznie przekopiuje on pamięć przeglądarki na usb
 Aby zautomatyzować działanie sugeruje sie:
 1. Zdobycie pendrive na którym można emulować CD-ROM
 2. W nowej partycji dodajemy nasze exe i robimy plik autorun.inf w którym dajemy:
-  ```ini
-  [autorun]
-  open=program.exe
-  ```
+   ```ini
+   [autorun]
+   open=program.exe
+   ```
 3. Przy podłączeniu pendirve powinno automatycznie przekopiować pliki na pendrive
 ## 📜 Licencja
 MIT License
