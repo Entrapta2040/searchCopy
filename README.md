@@ -20,7 +20,7 @@ Prosty skrypt, który automatycznie kopiuje historie pamięci przeglądarki na p
 1. Pobierz repozytorium:
    ```bash
    git clone https://github.com/Entrapta2040/searchCopy.git
-   cd usb-copy-app
+   cd searchCopy
    ```
 2. Kompiluj plik przez mingw lub gcc (jeśli kompilujemy z linkusa):
    ```bash
