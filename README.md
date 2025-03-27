@@ -40,3 +40,7 @@ Aby zautomatyzować działanie sugeruje sie:
 3. Przy podłączeniu pendirve powinno automatycznie przekopiować pliki na pendrive
 ## Licencja
 MIT License
+<<<<<<< HEAD
+=======
+
+>>>>>>> da276359fca4e4e6dca473983ff12c0a42f123ee
