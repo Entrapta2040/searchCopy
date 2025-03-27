@@ -23,9 +23,9 @@ Prosty skrypt, który automatycznie kopiuje historie pamięci przeglądarki na p
    cd usb-copy-app
    ```
 2. Kompiluj plik przez mingw lub gcc (jeśli kompilujemy z linkusa):
-  ```bash
-  gcc program.c -o nazwa_exe_jaka_chcemy.exe
-  ```
+   ```bash
+   gcc program.c -o nazwa_exe_jaka_chcemy.exe
+   ```
 
 ## ▶ Jak używać?
 Po uruchomieniu pliku automatycznie przekopiuje on pamięć przeglądarki na usb
