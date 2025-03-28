@@ -15,6 +15,7 @@ Prosty skrypt, który automatycznie kopiuje historie pamięci przeglądarki na p
   - MS Edge
   - Opera
   - Brave
+- SQLite3 (poradnik w instalacji poniżej)
 
 ## Instalacja
 1. Pobierz repozytorium:
