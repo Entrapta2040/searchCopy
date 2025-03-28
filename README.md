@@ -23,27 +23,27 @@ Prosty skrypt, który automatycznie kopiuje historie pamięci przeglądarki na p
    cd searchCopy
    ```
 2. Pobierz [bibliotekę sqlite3](https://www.sqlite.org/2025/sqlite-amalgamation-3490100.zip) i wypakuj (plik .h i .c)<br>
-   Jeśli masz Linuxa użyj:<br>
+   - Jeśli masz Linuxa użyj:<br>
    
-    Debian/Ubuntu:<br>
-       ```bash
-       sudo apt install sqlite3 libsqlite3-dev
-       ```<br>
-       
-    Arch Linux:<br>
-       ```bash
-       sudo pacman -S sqlite
-       ```<br>
-       
-    Fedora:<br>
-       ```bash
-       sudo dnf install sqlite sqlite-devel
-       ```<br>
-       
-   Po instalce sprawdź wersje:<br>
-    ```bash
-    sqlite3 --version
-    ```
+      - Debian/Ubuntu:<br>
+        ```bash
+        sudo apt install sqlite3 libsqlite3-dev
+        ```
+   
+      - Arch Linux: <br>
+        ```bash
+        sudo pacman -S sqlite
+        ```
+    
+      - Fedora: <br>
+        ```bash
+        sudo dnf install sqlite sqlite-devel
+        ```
+      
+   - Po instalce sprawdź wersje:
+     ```bash
+     sqlite3 --version
+     ```
 4. Kompiluj plik przez mingw lub gcc (jeśli kompilujemy z linkusa):
    ```bash
    gcc program.c -o nazwa_exe_jaka_chcemy.exe
