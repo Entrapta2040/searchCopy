@@ -27,7 +27,7 @@ void getUser(char* username, DWORD* size) {
     }
 }
 
-// wyświetla dostępne tabele w bazie sqlite (do debugowania)
+// wyświetla dostępne tabele w bazie sqlite
 void checkTables(sqlite3* db) {
     sqlite3_stmt* stmt;
     const char* sql = "SELECT name FROM sqlite_master WHERE type='table';";
@@ -73,20 +73,30 @@ void getFirefoxProfile(char* browserPath, size_t size, const char* username) {
     while (fgets(line, sizeof(line), iniFile)) {
         if (strncmp(line, "[", 1) == 0) {
             currentPath[0] = '\0';
-        } else if (strncmp(line, "Path=", 5) == 0) {
+        }
+        else if (strncmp(line, "Path=", 5) == 0) {
             sscanf_s(line, "Path=%255s", currentPath, (unsigned)_countof(currentPath));
-        } else if (strncmp(line, "Default=1", 9) == 0) {
+        }
+        else if (strncmp(line, "Default=1", 9) == 0) {
             if (currentPath[0] != '\0') {
-                strcpy_s(defaultProfile, sizeof(defaultProfile), currentPath);
-                break;
+                currentPath[0] = '\0';
             }
+        }
+        else if (currentPath[0] != '\0') {
+            char* profilesPos = strstr(currentPath, "Profiles/");
+            if (profilesPos != NULL) {
+                memmove(currentPath, profilesPos + strlen("Profiles/"), strlen(profilesPos + strlen("Profiles/")) + 1);
+            }
+            strcpy_s(defaultProfile, sizeof(defaultProfile), currentPath);
+            break;
         }
     }
     fclose(iniFile);
 
     if (strlen(defaultProfile) > 0) {
         snprintf(browserPath, size, "C:\\Users\\%s\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\%s\\places.sqlite", username, defaultProfile);
-    } else {
+    }
+    else {
         printf("nie znaleziono domyślnego profilu Firefoxa.\n");
     }
 }
@@ -117,15 +127,22 @@ void getLocation(char* browserPath, size_t pathSize, const char* username, char*
 
     if (_strcmpi(browserType, "Chrome") == 0) {
         snprintf(browserPath, pathSize, "C:\\Users\\%s\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\History", username);
-    } else if (_strcmpi(browserType, "Firefox") == 0) {
+    }
+    else if (_strcmpi(browserType, "Firefox") == 0) {
         getFirefoxProfile(browserPath, pathSize, username);
-    } else if (_strcmpi(browserType, "Edge") == 0) {
-        snprintf(browserPath, pathSize, "C:\\Users\\%s\\AppData\\Local\\Microsoft\\Edge\\User Data\\Default\\History", username);
-    } else if (_strcmpi(browserType, "Brave") == 0) {
-        snprintf(browserPath, pathSize, "C:\\Users\\%s\\AppData\\Local\\BraveSoftware\\Brave-Browser\\User Data\\Default\\History", username);
-    } else if (_strcmpi(browserType, "Opera") == 0) {
-        snprintf(browserPath, pathSize, "C:\\Users\\%s\\AppData\\Roaming\\Opera Software\\Opera Stable\\Default\\History", username);
-    } else {
+    }
+    else if (_strcmpi(browserType, "Edge") == 0) {
+        snprintf(browserPath, sizeof(browserPath), "C:\\Users\\%s\\AppData\\Local\\Microsoft\\Edge\\User Data\\Default\\History", username);
+
+    }
+    else if (_strcmpi(browserType, "Opera") == 0) {
+        snprintf(browserPath, sizeof(browserPath), "C:\\Users\\%s\\AppData\\Roaming\\Opera Software\\Opera Stable\\History", username);
+
+    }
+    else if (_strcmpi(browserType, "Brave") == 0) {
+        snprintf(browserPath, sizeof(browserPath), "C:\\Users\\%s\\AppData\\Local\\BraveSoftware\\Brave-Browser\\User Data\\Default\\History", username);
+    }
+    else {
         printf("nieobsługiwana przeglądarka.\n");
         browserPath[0] = '\0';
     }
@@ -158,16 +175,70 @@ void sqliteConvert(const char* browserPath, const char* username, const char* da
         return;
     }
 
-    char outputDir[MAX_PATH_SIZE];
-    GetTempPathA(MAX_PATH_SIZE, outputDir);
-    CreateDirectoryA(outputDir, NULL);
+    DWORD dwSize = MAX_PATH;
+    char volumeName[MAX_PATH];
+    char driveLetter[4] = { 0 };
+    HANDLE hFind = FindFirstVolume(volumeName, dwSize);
+    if (hFind == INVALID_HANDLE_VALUE) {
+        printf("Nie udało się znaleźć woluminów.\n");
+        sqlite3_finalize(stmt);
+        sqlite3_close(db);
+        return;
+    }
+
+    do {
+        // Pobierz ścieżki montażowe dla tego woluminu
+        char volumeMountPoints[MAX_PATH * 10];
+        DWORD charsReturned;
+        char driveStrings[1024];
+        if (GetLogicalDriveStringsA(sizeof(driveStrings), driveStrings)) {
+            char* p = driveStrings;
+            while (*p) {
+                if (GetDriveTypeA(p) == DRIVE_REMOVABLE) {
+                    strncpy_s(driveLetter, sizeof(driveLetter), p, _TRUNCATE);
+                    printf("Pierwszy znaleziony napęd wymienny: %s\n", driveLetter);
+                    break;
+                }
+                p += strlen(p) + 1;
+            }
+            if (*p == '\0') {
+                printf("Nie znaleziono napędu wymiennego.\n");
+                sqlite3_finalize(stmt);
+                sqlite3_close(db);
+                return;
+            }
+        }
+        else {
+            printf("Błąd podczas pobierania listy napędów.\n");
+            sqlite3_finalize(stmt);
+            sqlite3_close(db);
+            return;
+        }
+    } while (FindNextVolume(hFind, volumeName, dwSize));
+
+    FindVolumeClose(hFind); // Poprawna funkcja do zamykania uchwytu
 
     char fileName[MAX_PATH_SIZE];
-    snprintf(fileName, sizeof(fileName), "%shistoria-%s-%s.txt", outputDir, username, date);
+    snprintf(fileName, sizeof(fileName), "%s\\copied\\historia-%s-%s.txt", driveLetter, username, date);
+
+    char copiedDir[MAX_PATH_SIZE];
+    snprintf(copiedDir, sizeof(copiedDir), "%scopied", driveLetter);
+    if (!CreateDirectoryA(copiedDir, NULL) && GetLastError() != ERROR_ALREADY_EXISTS) {
+        printf("Błąd tworzenia katalogu %s: %ld\n", copiedDir, GetLastError());
+        sqlite3_finalize(stmt);
+        sqlite3_close(db);
+        return;
+    }
 
     FILE* file;
-    if (fopen_s(&file, fileName, "w") != 0) {
-        printf("błąd otwierania pliku: %s\n", strerror(errno));
+    if (fopen_s(&file, fileName, "w+") != 0) {
+        char errBuf[256];
+        if (strerror_s(errBuf, sizeof(errBuf), errno) == 0) {
+            printf("błąd otwierania pliku: %s (%s)\n", fileName, errBuf);
+        }
+        else {
+            printf("błąd otwierania pliku: %s\n", fileName);
+        }
         sqlite3_finalize(stmt);
         sqlite3_close(db);
         return;
@@ -175,7 +246,7 @@ void sqliteConvert(const char* browserPath, const char* username, const char* da
 
     while (sqlite3_step(stmt) == SQLITE_ROW) {
         fprintf(file, "URL: %s\nTytuł: %s\nOdwiedzin: %d\n\n",
-                sqlite3_column_text(stmt, 0), sqlite3_column_text(stmt, 1), sqlite3_column_int(stmt, 2));
+            sqlite3_column_text(stmt, 0), sqlite3_column_text(stmt, 1), sqlite3_column_int(stmt, 2));
     }
 
     printf("historia zapisana do: %s\n", fileName);
