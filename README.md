@@ -4,7 +4,7 @@ Prosty skrypt, który automatycznie kopiuje historie pamięci przeglądarki na p
 
 ## Funkcje
 - Kopiuje plik do przygotowanego katalogu na USB
-- Obsługuje błędy, gdy pendrive nie jest podłączony (todo)
+- Obsługuje błędy, gdy pendrive nie jest podłączony
 
 ## Wymagania
 - Windows (kopiowanie przystosowane do NTFS)
@@ -46,9 +46,14 @@ Prosty skrypt, który automatycznie kopiuje historie pamięci przeglądarki na p
      sqlite3 --version
      ```
 4. Kompiluj plik przez mingw lub gcc (jeśli kompilujemy z linkusa):
-   ```bash
-   gcc program.c -o nazwa_exe_jaka_chcemy.exe
-   ```
+   - W przypadku mingw **(PLIKI MUSZĄ BYC W TYM SAMYM FOLDERZE)**
+     ```bash
+     gcc program.c sqlite3.c -o nazwajakachcemy.exe
+     ```
+   - W przypadku gcc
+     ```bash
+     gcc program.c -o nazwajakachcemy.exe -lsqlite3
+     ```
 
 ## Jak używać?
 Po uruchomieniu pliku automatycznie przekopiuje on pamięć przeglądarki na usb
