@@ -11,10 +11,6 @@ Prosty skrypt, który automatycznie kopiuje historie pamięci przeglądarki na p
 - Pendrive
 - Przeglądarka:
   - Firefox
-  - Chrome
-  - MS Edge
-  - Opera
-  - Brave
 - SQLite3 (poradnik w instalacji poniżej)
 
 ## Instalacja
@@ -48,11 +44,11 @@ Prosty skrypt, który automatycznie kopiuje historie pamięci przeglądarki na p
 4. Kompiluj plik przez mingw lub gcc (jeśli kompilujemy z linkusa):
    - W przypadku mingw **(PLIKI MUSZĄ BYC W TYM SAMYM FOLDERZE)**
      ```bash
-     gcc program.c sqlite3.c -o nazwajakachcemy.exe
+     gcc program.c sqlite3.c -o moj_program.exe -luser32 -lkernel32
      ```
    - W przypadku gcc
      ```bash
-     gcc program.c -o nazwajakachcemy.exe -lsqlite3
+     gcc program.c -o nazwajakachcemy.exe -lsqlite3 -luser32 -lkernel32
      ```
 
 ## Jak używać?
